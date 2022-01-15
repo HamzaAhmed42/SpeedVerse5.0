@@ -6,7 +6,7 @@
 /NAME:"UnrealEditor-RiderBlueprintExtension.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Module.RiderBlueprintExtension.cpp.obj"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Default.rc2.res"
-/OUT:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\UnrealEditor-RiderBlueprintExtension.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Module.RiderBlueprintExtension.cpp.obj"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Default.rc2.res"
+/OUT:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\UnrealEditor-RiderBlueprintExtension.lib"
 /INCLUDE:IMPLEMENT_MODULE_RiderBlueprintExtension

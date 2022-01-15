@@ -6,7 +6,7 @@
 /NAME:"UnrealEditor-RiderShaderInfoDump.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfoDump\RiderShaderInfoDump.cpp.obj"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfoDump\Default.rc2.res"
-/OUT:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfoDump\UnrealEditor-RiderShaderInfoDump.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfoDump\RiderShaderInfoDump.cpp.obj"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfoDump\Default.rc2.res"
+/OUT:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfoDump\UnrealEditor-RiderShaderInfoDump.lib"
 /INCLUDE:IMPLEMENT_MODULE_RiderShaderInfoDump

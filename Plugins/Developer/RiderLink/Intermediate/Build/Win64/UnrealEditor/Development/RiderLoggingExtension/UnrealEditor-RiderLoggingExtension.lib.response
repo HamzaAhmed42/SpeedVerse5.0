@@ -6,7 +6,7 @@
 /NAME:"UnrealEditor-RiderLoggingExtension.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLoggingExtension\Module.RiderLoggingExtension.cpp.obj"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLoggingExtension\Default.rc2.res"
-/OUT:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLoggingExtension\UnrealEditor-RiderLoggingExtension.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLoggingExtension\Module.RiderLoggingExtension.cpp.obj"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLoggingExtension\Default.rc2.res"
+/OUT:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLoggingExtension\UnrealEditor-RiderLoggingExtension.lib"
 /INCLUDE:IMPLEMENT_MODULE_RiderLoggingExtension

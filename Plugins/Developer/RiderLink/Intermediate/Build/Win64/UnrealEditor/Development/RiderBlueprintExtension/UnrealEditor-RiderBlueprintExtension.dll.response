@@ -1,5 +1,5 @@
 /MANIFEST:EMBED
-/MANIFESTINPUT:"C:\Program Files\Epic Games\UE_5.0EA\Engine\Build\Windows\Resources\Default-Win64.manifest"
+/MANIFESTINPUT:"E:\Unreal Engine\UE_5.0EA\Engine\Build\Windows\Resources\Default-Win64.manifest"
 /NOLOGO
 /DEBUG
 /errorReport:prompt
@@ -18,7 +18,7 @@
 /ignore:4099
 /DELAYLOAD:"d3d12.dll"
 /DELAYLOAD:"DBGHELP.DLL"
-/LIBPATH:"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64"
+/LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\lib\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x64"
@@ -33,19 +33,19 @@
 /NODEFAULTLIB:"LIBCD"
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Module.RiderBlueprintExtension.cpp.obj"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Default.rc2.res"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\SlateCore\UnrealEditor-SlateCore.lib"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\UnrealEditor-RiderLink.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\Slate\UnrealEditor-Slate.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\AssetRegistry\UnrealEditor-AssetRegistry.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\MessagingCommon\UnrealEditor-MessagingCommon.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\UnrealEd\UnrealEditor-UnrealEd.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\UnrealEdMessages\UnrealEditor-UnrealEdMessages.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
-"C:\Program Files\Epic Games\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RD\UnrealEditor-RD.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Module.RiderBlueprintExtension.cpp.obj"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\Default.rc2.res"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\SlateCore\UnrealEditor-SlateCore.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\UnrealEditor-RiderLink.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\Slate\UnrealEditor-Slate.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\AssetRegistry\UnrealEditor-AssetRegistry.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\MessagingCommon\UnrealEditor-MessagingCommon.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\UnrealEd\UnrealEditor-UnrealEd.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\UnrealEdMessages\UnrealEditor-UnrealEdMessages.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
+"E:\Unreal Engine\UE_5.0EA\Engine\Intermediate\Build\Win64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RD\UnrealEditor-RD.lib"
 "delayimp.lib"
 "wininet.lib"
 "rpcrt4.lib"
@@ -70,8 +70,8 @@
 "setupapi.lib"
 "dwmapi.lib"
 "imm32.lib"
-/OUT:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderBlueprintExtension.dll"
-/IMPLIB:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\UnrealEditor-RiderBlueprintExtension.suppressed.lib"
-/PDB:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderBlueprintExtension.pdb"
+/OUT:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderBlueprintExtension.dll"
+/IMPLIB:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderBlueprintExtension\UnrealEditor-RiderBlueprintExtension.suppressed.lib"
+/PDB:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderBlueprintExtension.pdb"
 /ignore:4078
 /INCLUDE:IMPLEMENT_MODULE_RiderBlueprintExtension

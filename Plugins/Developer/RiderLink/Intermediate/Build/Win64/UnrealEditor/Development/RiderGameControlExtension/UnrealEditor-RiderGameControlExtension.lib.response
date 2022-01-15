@@ -6,7 +6,7 @@
 /NAME:"UnrealEditor-RiderGameControlExtension.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderGameControlExtension\RiderGameControlExtension.cpp.obj"
-"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderGameControlExtension\Default.rc2.res"
-/OUT:"C:\Users\Yuvi\Desktop\BugMania\SpeedVerse\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderGameControlExtension\UnrealEditor-RiderGameControlExtension.lib"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderGameControlExtension\RiderGameControlExtension.cpp.obj"
+"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderGameControlExtension\Default.rc2.res"
+/OUT:"F:\SpeedVerse5.0\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderGameControlExtension\UnrealEditor-RiderGameControlExtension.lib"
 /INCLUDE:IMPLEMENT_MODULE_RiderGameControlExtension

@@ -1,16 +1,17 @@
+
 ***
 PART 1
 ***
 -----
-SKY BASICS
+SKY INTRO
 -----
 Hello! Thanks for purchasing Ultra Dynamic Sky!
-This short readme should cover all the basics, but if you have any questions or run into any problems, please email me at everettgunther@gmail.com
+This readme should cover all the basics, but if you have any questions or run into any problems, please email me at everettgunther@gmail.com
 Also, there are tooltips for just about every setting on the sky and weather, so if you're confused about what something does, hover over it for a specific explanation.
 -----
 ADDING THE SKY TO YOUR SCENE
 -----
-First make sure you delete from your scene any existing lights for the sun, moon, and skylight, as well as any existing fog actors, sky spheres, or sky atmosphere actors.
+First make sure you delete from your scene any existing lights for the sun, moon, and sky light, as well as any existing fog actors, sky spheres, or sky atmosphere actors.
 If after doing this there is still some ambient light present, that probably means there's still static light in the lightmaps from the previous lighting solution, so run a lighting build (from the Build dropdown on the main toolbar) to clear that out.
 Drag the Ultra_Dynamic_Sky actor into your scene from the Blueprints folder.
 The default state of the sky will use the built in light components for the sun, moon and sky light, and all three will be movable by default. If you need to, you can adjust their mobility using the mobility settings in the Sun, Moon and Sky Light categories.
@@ -113,7 +114,7 @@ With everything enabled at the highest quality, UDS can be demanding for some ha
 • Only use one layer of volumetric clouds. The option to use 2 layers is disabled by default because it has a significant performance cost.If Using 2D Dynamic Clouds:>• Try enabling the option to use only one 2D cloud layer. This can reduce the cost of the sky shader.Misc Performance Tips>• Turn off Aurora effects in the Aurora category. These are actually disabled by default, as they add a signifigant instruction count cost to the shader. If performance is a priority, consider disabling these.
 • Change the Color Mode on UDS to Simplified Color. This eliminates the cost of the Sky Atmosphere and makes a signficant difference to the instruction cost of the sky material.
 • Reduce the "Material Quality Level" scalability setting. The sky shader will reduce some minor aspects of its visuals based on Material Quality Level, including forcing a single cloud layer when quality is set to low. The Volumetric Clouds change significantly with Material Quality Level as well, changing the resolution of 3D noise used as well as the number of texture layers sampled for both 2D and 3D layers of the shader.
-• All of the lights on UDS are movable by default, but static or stationary lighting is always going to be a more performance friendly option if it can fit your project. You can adjust the mobility of each light from the Component Selection and Mobility category.
+• All of the lights on UDS are movable by default, but static or stationary lighting is always going to be a more performance friendly option if it can fit your project. You can adjust the mobility of each light from their respective categories in the UDS details.
 • You can also set the Sky Mode to change on launch with the current Effects Quality set in the Game User Settings. For example, you could make it so that settings Medium and above use volumetric clouds, while Low will use static clouds. You can do this by enabling "Use Sky Mode Scalability Map" in Basic Controls, under the advanced dropdown, and adjusting the map.
 -----
 CONSIDERATIONS FOR MOBILE
@@ -133,10 +134,32 @@ CONTROLLING TIME OF DAY FROM ANOTHER ACTOR
 If you have your own system for time of day and need to control the sky externally, the process for that is very simple. Just have your actor change the Time of Day variable in Ultra_Dynamic_Sky and the sky will update to the change you make on its own. Just make sure Animate Time of Day is disabled on UDS so that the two aren't conflicting.
 You can also set the Time of Day variable using different time structures, using the utility functions on UDS. "Set Time of Day Using Time Code" and "Set Date and Time" are ones to try.
 -----
+ADJUSTING SETTINGS INSIDE INTERIORS
+-----
+UDS has a category called Interior Adjustments, which if enabled, you can use to adjust things like fog and light, based on how occluded the player camera is.
+To use these settings, first check "Apply Interior Adjustments" in the Interior Adjustments category.
+Then, make your changes to the settings below, which modify various properties of the sky when inside an interior.
+Note, the interior adjustments can only test and respond to the player camera's location at runtime, so you'll need to play the level to see the effects.
+You can also place the UDS_Occlusion_Volume actor, found in Blueprints/Occlusion, to force specific spaces to be fully occluded and always apply the interior adjustments. Note the setting on UDS for "Occlusion Sampling Mode" which determines if occlusion is determined by the traces for collision, the occlusion volumes, or both.
+-----
 TRIGGERING EVENTS AT SUNRISE AND SUNSET
 -----
 There are Sunrise and Sunset event dispatchers. These could be useful for toggling lighting that you only want enabled at night, or controlling any type of blueprint that needs to know about day/night.
 To use them, you'll first need to get a reference to the UDS actor in your blueprints. A simple way to do that is to use "Get Actor of Class". Then using that reference, you can bind events in your blueprint by running "Bind to Sunrise" or "Bind to Sunset". Once they're bound, these events will be called by UDS at the appropriate time. By default, the events will fire at the exact moment the sun crosses the horizon. But you can offset that time to suit your needs using the "Sunrise Event Offset" and "Sunset Event Offset" settings in the Animate Time of Day category.
+For events that happen at a specific time, you could use the Hourly dispatcher, which triggers at the top of each hour and outputs the hour as an integer.
+-----
+ADDING POST PROCESSING WHICH CHANGES WITH TIME / SKY STATE
+-----
+In the Post Processing category on UDS, you'll find an empty exposed array. If you add entries to this array, the system will create a post process component for each entry.
+Each entry has post process settings, where you can override and modify any post setting such as bloom settings, color grading, vignette, etc. Below the post processing settings are:
+1. Checkboxes to Enable/Disable this post process component based on the time of day. This will control the blend weight of the component, fading it in and out based on the current time.
+2. Checkboxes to mask the component with cloud coverage, fog, dust, or interior occlusion. For example, if you checked "Mask Blend Weight When Overcast", the post settings for this component would fade away as the sky becomes overcast.
+By adding entries to this array, you can customize the post processing settings for any specific condition.
+-----
+USING ULTRA DYNAMIC SKY WITH THE PATH TRACER
+-----
+If you render using the Path Tracer in a scene with Ultra Dynamic Sky, you'll face some rendering limitations of the path tracer. Specifically it cannot yet render many of the sky rendering features (clouds, sky atmosphere) which UDS makes use of. The path tracer will instead use the sky light cube map as a replacement for native sky rendering.
+Ultra Dynamic Sky has a setting specifically to adjust for these limitations as well as it can, to work accepably as a background for path traced renders. Just enable the option "Adjust for Path Tracer" in the advanced dropdown of the Basic Controls category on UDS.
 -----
 ADDING AMBIENT SOUNDS CONTROLLED BY TIME AND WEATHER
 -----
@@ -144,6 +167,7 @@ If you want an ambient sound actor to adjust it's volume based on if it's day or
 It's called "AmbientSound_Time_and_Weather_Controlled" and can be found in the Blueprints/Sound folder.
 It's a child of the normal Ambient Sound class, so it works exactly the same. Just with additional logic to control the volume multiplier with time and weather.
 At the top of the Sound category, you'll find the settings for this. There are volume multipliers for day and night, as well as ones for snowy/rainy/no weather. There's also a setting called Volume Multiplier Transition Time which controls how long it will take the volume multiplier to change when time/weather triggers a change.
+If using this for outdoor ambient sounds, you may also want your sound to adjust to UDW's sound occlusion, getting quieter in interiors the same way UDW's weather sounds do. There is an intended way to do this. If you use the sound class UDS Outdoor Sounds for your ambient sounds, and you have sound occlusion enabled on UDW, then your sound volume will be affected by the sound occlusion.
 -----
 SAVING THE SKY AND WEATHER STATE FOR SAVE DATA
 -----
@@ -152,10 +176,9 @@ If you need to save the current state of UDS, and UDW as well if using it, for s
 -----
 SAVING AND APPLYING CONFIGURATIONS
 -----
-It may be useful to save a full configuration of all the settings on UDS. You can do this using the configuration manager. You can find the configuration manager in the Blueprints folder, and run it by right clicking and selecting Run Editor Utility Widget.
+It may be useful to save a full configuration of all the settings on UDS for reusing in other levels/projects. You can do this using the configuration manager. You can find the configuration manager in the Blueprints folder, and run it by right clicking and selecting Run Editor Utility Widget.
 In the configuration manager, you can select your existing saved configurations to apply to your UDS actor. And you can create new configurations using the save button in the bottom right, when no configuration is selected.
 You will be prompted to name your new configuration and select a place to save it. You can either save to your project files, which will put the new config into the Ultra Dynamic Sky folder in your project. Or you can save to the engine content folder, which will put the config file into an Ultra Dynamic Sky folder there. If the config is saved in the project, it will be accessible only from this project. If the config is saved to the engine, it will be accessible by UDS in any project using that engine version.
-
 
 
 
@@ -164,7 +187,7 @@ You will be prompted to name your new configuration and select a place to save i
 PART 2
 ***
 -----
-WEATHER BASICS
+WEATHER INTRO
 -----
 Ultra Dynamic Weather can add rain, snow, dust, sound, material effects and more to your scene. You can control the weather changes in several different ways from random variation to directly calling a weather change.
 -----
@@ -213,8 +236,10 @@ A weather override volume can either apply a single weather type within its spac
 To adjust the area affected by the volume, edit the points of the spline component. You can right click on a point on the spline to add new spline points. You can also scale the actor, but try to avoid non-uniform scaling.
 The variable "Transition Width" controls how much space is devoted to transitioning from the outside weather state to the inside weather state. The transition is completely spatial, so ideally the transition width should be very high, to offer a smooth transition between states as the player crosses into the volume. The default transition width is small to keep the initial size of the actor reasonable as a starting point. An ideal transition width would typically be much larger.
 You can adjust the Priority variable to control what happens when multiple volumes overlap.
-The effects of the Weather Override Volumes are dependent on the position of the player, so they're only visible when the game is running.
+The effects of the Weather Override Volumes on weather state are dependent on the position of the player, so they're only visible when the game is running.
 By default, UDW will test against the weather override volumes using the current player pawn location. You can adjust this behavior from the advanced dropdown of UDW's Basic Controls. The Control Point Source Location is what determines this.
+The Weather Override Volumes will, by default, draw their material state into a render target sampled by the weather material functions, so that for example a snowy region can appear snowy from outside, and from inside you can see the lack of snow coverage outside the region. This behavior can be disabled or adjusted on UDW, from the Weather Override Volumes category.
+Weather Override Volumes also have functions which can be called to change their state at runtime, similar to UDW. There is a Change Weather function, which will transition to a specific static weather preset. And there is Change to Random Weather, which will transition over to random weather if the existing mode is Single Weather Type.
 -----
 SETTING UP AND CONTROLLING MATERIAL EFFECTS
 -----
@@ -233,7 +258,7 @@ everything else. The main inputs from Base Color to World Position Offset are wh
 3. On UDW, enable the setting "Enable Dynamic Landscape Weather Effects" in the category of the same name.
 4. Add interaction components to objects you want to affect snow and puddles. The component is called "DLWE Interaction". You can find it in the Blueprints/Weather Effects folder. It is a self contained blueprint component which keeps track of its movement and when appropritate will draw compressions into the snow/dust and ripples into the puddles. When adding the component, make sure to place it in the center of mass of the part of the object which will contact the ground. For example, to make a character model leave trails in the snow with their feet, you would add two DLWE Interaction compo
 nents, as children of the skeletal mesh. You would set their parent socket to be the left and right foot sockets, and move the components so they sit in each foot's center of mass. When adding components, make sure to adjust their Size variable. This determines how far away the component will affect the landscape and how big the brush used for its effects. The size should be roughly the same as the diameter of the object. So for the character's feet, that would be rougly the length of the foot. By default, the interaction component will produce movement sound effects and particles. You can dis
-able any of these from the component settings.For the snow and dust coverage, the depth of the trails is achieved using a simplified parallax occlusion effect. This effect is enabled by default, but can be disabled using a static bool input on the function.
+able any of these from the component settings.For the snow and dust coverage, the depth of the trails is achieved using a simplified parallax occlusion effect. This effect is enabled by default, but can be disabled using a static switch parameter in the function.
 The effects are designed primarily for landscapes, but you can use them on a static mesh as well. To tell UDW and the Interaction components what surfaces the components should respond to (other than landscapes) you'll need to add physical materials to an array on UDW called "Physical Materials which Enable DLWE Interactions on Non-Landscapes". Make sure your static meshes are using physmats in that array, and the DLWE Interaction components will respond to their collision as they do to landscapes. Also, make sure your static mesh is of the object type for "Landscape Object Type" set on UDW. B
 y default this is World Static.
 The render target will dynamically recenter itself as your player pawn moves through the level. If you want this recentering to be based on a different location, you can do that. In UDW's Basic Controls, in the advanced dropdown, change the Control Point Location Source. This also affects how weather is changed by weather override volumes. By default the player pawn location is used, and should be a good fit for most projects. But you can change this to use the player camera location, or to control it manually using a vector variable.
@@ -254,11 +279,13 @@ USING WEATHER SOUND EFFECTS
 -----
 By default, Ultra Dynamic Weather has sound effects enabled for wind, rain and thunder. You can completely disable the sound effects using the checkbox at the top of the Sound Effects category, or you can adjust the volume of each sound there as well.The sound effects on UDW are affected by a simple system of sound occlusion by default, which periodically sends out traces from the camera location and adjusts sound volume and low pass filter frequency if the player is in an enclosed space. This behavior can be disabled or adjusted from the Sound Occlusion category.
 From this category you can also change the sound occlusion to use the Control Point Location (player pawn location by default) if that makes more sense for your project. For example, a top down game where occlusion whould be player centric instead of camera centric.
+You can also place the UDS_Occlusion_Volume actor, found in Blueprints/Occlusion, to force specific spaces to be fully occluded and always attenuate weather sounds. Note the setting on UDW for "Occlusion Sampling Mode" which determines if occlusion is determined by the traces for collision, the occlusion volumes, or both.
 -----
 ADJUSTING THE LIGHTNING EFFECTS
 -----
 There are two types of lightning in Ultra Dynamic Weather. Lightning Flashes and Obscured Lightning. Lightning Flashes are the big lightning bolts which can cast light into the scene and have a directly associated loud crash of thunder. Obscured Lightning is the particle effect which looks like flashes of lightning hidden in the cloud layer.
-In the Lightning category, you can adjust the interval between flashes of both lightning type. You can adjust the behavior of the light source for lightning flashes (if you want one at all) and you can enable lightning during snowy weather as well (which is disabled by default).
+Note that the lightning flashes are spawned and animated with runtime logic, so they won't be visible until you play the level.
+In the Lightning category, you can adjust the interval between flashes of both lightning type. You can adjust the behavior of the light source for lightning flashes (if you want one at all) and the color of the lights and effects.
 If you need to manually trigger a lightning flash, you can do this. Just run the function Flash Lightning. It has inputs so you can give it a custom location to spawn in. Note that this location is the position of the root of the lightning bolt, so it should be at cloud level.
 -----
 ADJUSTING VOLUMETRIC FOG PARTICLES
@@ -279,6 +306,13 @@ This base value is then modified by the Factor variables in the Temperature cate
 Then the resulting temperature is clamped inside the Valid Temperature Range.
 The default values for all of these inputs are set with Fahrenheit in mind, but you can use Celsius values if you prefer. Just change the Temperature Scale at the top of the Temperature category, and supply all of the variables with your own appropriate Celsius values.
 -----
+ENABLING A RAINBOW EFFECT
+-----
+You can enable a rainbow effect as an aspect of the weather state, on UDW. The settings are found in the Rainbow category.
+Like in reality, rainbows will only be visible in specific circumstances:>1. There is rain or fog contributing to the visibility of the rainbow. The amount each of these contributes is controlled by settings in the Rainbow category.
+2. The camera is directly exposed to sunlight, as affected by cloud shadows. So if the camera is in shadow from the clouds, the rainbow won't be visible.
+3. The sun itself needs to be low enough for the rainbow to be visible above the horizon.There are further settings in the Rainbow category to control how visible rainbows can be above the cloud layer, or below the water level, if the water level is enabled.
+-----
 MAKING AN ACTOR DETECT EXPOSURE TO WEATHER
 -----
 It might be necessary for an actor to query if it's exposed to weather directly. For example, if you wanted direct exposure to snow to damage a player's stamina meter.
@@ -297,7 +331,18 @@ MATERIAL EFFECTS FOR SPECIAL CASES
 -----
 There are a few material functions which exist for special cases, to be used only on particular types of materials. Just like the basic functions, these are available by searching in the material editor for "Weather".>• WaterSurface_Rain_Ripples - This function exists to add raindrop ripple effects to a water shader. It takes in a normal value for the existing water normals and adds the raindrop effects to the output.
 • GlassWindow_Rain_Drips - This function exists to add refractive water droplets dripping down a thin glass surface like a window. It is made to be used on translucent materials only.
-
+-----
+ADDING DLWE TO A VIRTUAL HEIGHTFIELD MESH
+-----
+There is support for using Dynamic Landscape Weather Effects on a virtual heightfield mesh. Note before starting that the Virtual Heightfield Mesh plugin, as of writing this, is still experimental and in my experience pretty difficult to get consistent results from. So understand before proceeding that even following this setup process correctly, you may encounter bugs and rendering artifacts which are due to the early and unstable state of the plugin.
+The setup process (assumes the starting point is a working existing setup with a virtual heightfield mesh, that you are adding DLWE to):>- First, on your Runtime Virtual Texture asset for base color/normal/roughness/etc, make sure its Virtual Texture Content setting is "YCoCg Base Color, Normal, Roughness, Specular, Mask". This is necessary because the DLWE effects require the Mask channel to send information about the surface detail to the main pass. Make sure after doing this that you change the matching setting on the Runtime Virtual Texture Sample node in your material.
+In the Landscape Material:
+- There are two functions you'll be adding to your material. One is the normal Dynamic Landscape Weather Effects function, to render in the main pass on top of the RVT sample. The other is a special function called DLWE_VHFM_RVT_Stage, which exists to effect the output rendered to the RVT.
+- Add the DLWE function to the graph, right after the Runtime Virtual Texture Sample node, using the sample outputs as the inputs for the DLWE function, and plugging the DLWE function outputs into the material result. Plug a static bool of True into the input "For Virtual Heightfield Mesh", and plug the RVT sample's Mask output into the input below that, called "Mask RVT Sample (For VHFM)".
+- Add the DLWE_VHFM_RVT_Stage function to the graph, before the Runtime Virtual Texture Output node. Route your World Height through that function, so that it can change the height for the virtual heightfield mesh. Also plug Specular and Mask from the function into the RVT output. The inputs on the function for Min Height Level and Max Height Level should have values plugged in which represent how far from the landscape's height the ground is being deformed up and down by your texture detail. For example, if your displacement used the full 0 to 1 range and is being multiplied by 10 and added t
+o the landscape height, the Min Height Level would be 0 and the Max Height Level would be 10.
+- On UDW, make sure "Enable Dynamic Landscape Weather Effects" is checked.
+- Also check "Support Virtual Heightfield Mesh" and in the option below that for "VHFM Runtime Virtual Texture Volume", select the RVT Volume in your level which is responsible for rendering to the World Height RVT, used to generate the heightfield mesh.
 
 
 
@@ -314,17 +359,17 @@ First, we'll go through the blueprints major features and how and where they're 
 BLUEPRINT - ULTRA DYNAMIC SKY
 -----
 Here is a rundown of the major features of the UDS blueprint, and some explanation of where to go in the BP to make changes to these behaviors.^Time of Day Management/AnimationIn the Event Graph, in the Day/Night Cycle section, the time of day is incremented if Animate Time of Day is enabled. It does this by adding the Time of Day Offset function to the existing Time of Day. It also checks to see if the day has ended (if ToD is more than 2400) and if so resets the time and triggers the Day Ended event in the same graph. Either periodically or every frame, depending on settings, the BP will run
- the Set Sun and Moon Root Rotation function, to derive the directional light rotation from time of day. As well as the “Update Directional Lights” function, to apply that rotation to the lights.^Updating Parameters and Component Settings with Time/WeatherThe key function for this is the Update Active Variables function. It applies the necessary changes to material parameters, light settings, cloud settings, etc, based on dynamic changes happening at runtime. For example, as time of day changes, this is where the fog color is determined so that it can adapt to the current time.^Construction Sc
-ript BehaviorUDS, on construction script, will fill all of its component references for the Sun, Moon, fog, and sky light, using the settings in Component Selection and Mobility. It will create dynamic material instances for the sky, clouds, cloud shadows, etc. And it will run the Update Active Variables and Update Static Variables functions to apply the current sky state to all of the materials and components.^Sun and Moon Light ControlOn the sun and moon directional lights, the BP will control their intensity, color, cast shadows, specular scale, light function (for cloud shadows), and their
- source angle. This is all determined in the Update Active Variables function, in the sections labeled Sun Light Settings and Moon Light Settings.^Sky Light ControlThere are three sky light components on UDS, which might seem strange, but they exist to get around a technical limitation with the engine. The BP cannot set the Source Type or Real Time Capture settings on the components, so in order to support the Sky Light Mode setting easily changing modes with one step, there has to be a sky light to support all modes. The settings on the sky light which UDS controls are the cube map, the inten
-sity, the color, and the lower hemisphere color. How it sets these depends heavily on the Sky Light Mode selected. These settings are applied in the Update Active Variables function, in the section called Sky Light Settings.^Fog ControlThe exponential height fog component on UDS is controlled using time and weather. Its density, height falloff, start distance, and colors are all affected. The function which chiefly determines fog colors is the Get Current Base Fog Colors function. Fog color behavior is affected significantly by the project setting “Support Sky Atmosphere Affecting Height Fog” 
-is enabled or not. With it disabled, fog color is entirely determined by UDS logic and its color curves for fog. If it’s enabled (and the color mode is set to Sky Atmosphere), UDS injects some color into fog for things like Night Sky Glow and Dust, but the main fog colors will come from the sky atmosphere contribution. The changes to the fog settings happen in Update Active Variables, in the Height Fog Settings section.^Volumetric Cloud ControlWhen the Sky Mode is set to Volumetric Clouds, the cloud component is made visible, and UDS sets many material parameters on the volumetric cloud materi
-al, as well as settings on the volumetric cloud component. These happen in two places. First, on Update Static Variables, many settings to do with sample quality and other static adjustments to cloud features are applied, in the section labeled Volumetric Clouds. This function is run just once on startup. The dynamic changes to the clouds (layer height, coverage, etc) happen in Update Active Variables, in the Volumetric Clouds section there.^Cloud MovementClouds (either 2D or volumetric) move on event tick, in a function called Set Cloud Timing. It has two paths in it, one for in editor, to pr
-eview cloud movement. And one for runtime, to move incrementally in a way that can change with wind direction/speed. This function also handles the Cloud Phase, which adjusts the offset of the cloud formation in time.^Simulation FeaturesUDS can control the Sun Moon and Stars instead using an approximate simulation of real world locations. This is mainly achieved in the function called Approximate Real Sun Moon and Stars. This function works by first extracting an exact UTC time (adjusting for time zone, date, leap year, etc). Then turning that exact time of year into a vector for the sun, a ve
-ctor for the moon (and a phase), and an angle+axis for the real stars texture. This is sampled in the Set Sun and Moon Root Rotation function to replace the simpler logic for sun and moon movement there.^Cloud ShadowsIf cloud shadows are enabled, UDS will create dynamic material instances for the light functions on the Sun and Moon directional lights, and update them using the cloud movement logic, to match the cloud conditions, either with 2D clouds or volumetric clouds (cloud shadows can be used with the sky modes that don’t have dynamic clouds as well. In this case they use the 2D cloud sha
-dows material). The cloud shadows settings are controlled in the Update Active Variables function, in the Cloud and Cloud Shadows section.^Lens FlareIf “Enable Sun Lens Flare” is enabled, UDS will enable a post process component with a special post process material (using a dynamic material instance) which renders a lens flare for the sun when visible. The effect is set up in the function Set Up Lens Flare, and updated periodically (to turn the effect off when unnecessary, for example when the sky is overcast) in the function Update Lens Flare.^Color ModeThere are two Color Modes selectable on
- UDS, which change the system significantly. The first, default mode is Sky Atmosphere, which uses a sky atmosphere component to produce sky and cloud coloring. If this mode is selected, the Sky Atmosphere component is set to be visible and the lights and materials are initialized to sample colors from the sky atmosphere. If the mode is instead set to Simplified Color, the Sky Atmosphere component is disabled, and color is handled manually by the UDS blueprint. The colors of the sky are set in the Simplified Color section of the Update Active Variables function. And this also has an effect on 
-light colors/intensities, in their respective sections as well.
+ the Set Sun and Moon Root Rotation function, to derive the directional light rotation from time of day. As well as the “Update Directional Lights” function, to apply that rotation to the lights.^Updating Parameters and Component Settings with Time/WeatherThere are two key functions for this. One is Cache Properties, and the other is Update Active Variables. Cache Properties is what calculates the values for properties which change with time and weather. Things like fog color, light intensities, etc. These values are placed into cached property arrays periodically, to be recalled by the Update
+ Active Variables function. The cached values are interpolated between as they are used in Update Active Variables, allowing them to change with time and weather and update smoothly, without needing to be recalculated completely every time they're applied.^Construction Script BehaviorUDS, on construction script, will fill all of its component references for the Sun, Moon, fog, and sky light, using the settings in Component Selection and Mobility. It will create dynamic material instances for the sky, clouds, cloud shadows, etc. And it will run the Update Active Variables and Update Static Vari
+ables functions to apply the current sky state to all of the materials and components.^Sun and Moon Light ControlOn the sun and moon directional lights, the BP will control their intensity, color, cast shadows, specular scale, light function (for cloud shadows), and their source angle. This is all determined in the Update Active Variables function, in the sections labeled Sun Light Settings and Moon Light Settings.^Sky Light ControlThere are three sky light components on UDS, which might seem strange, but they exist to get around a technical limitation with the engine. The BP cannot set the So
+urce Type or Real Time Capture settings on the components, so in order to support the Sky Light Mode setting easily changing modes with one step, there has to be a sky light to support all modes. The settings on the sky light which UDS controls are the cube map, the intensity, the color, and the lower hemisphere color. How it sets these depends heavily on the Sky Light Mode selected. These settings are applied in the Update Active Variables function, in the section called Sky Light Settings.^Fog ControlThe exponential height fog component on UDS is controlled using time and weather. Its densit
+y, height falloff, start distance, and colors are all affected. The function which chiefly determines fog colors is the Get Current Base Fog Colors function. Fog color behavior is affected significantly by the project setting “Support Sky Atmosphere Affecting Height Fog” is enabled or not. With it disabled, fog color is entirely determined by UDS logic and its color curves for fog. If it’s enabled (and the color mode is set to Sky Atmosphere), UDS injects some color into fog for things like Night Sky Glow and Dust, but the main fog colors will come from the sky atmosphere contribution. The cha
+nges to the fog settings happen in Update Active Variables, in the Height Fog Settings section.^Volumetric Cloud ControlWhen the Sky Mode is set to Volumetric Clouds, the cloud component is made visible, and UDS sets many material parameters on the volumetric cloud material, as well as settings on the volumetric cloud component. These happen in two places. First, on Update Static Variables, many settings to do with sample quality and other static adjustments to cloud features are applied, in the section labeled Volumetric Clouds. This function is run just once on startup. The dynamic changes t
+o the clouds (layer height, coverage, etc) happen in Update Active Variables, in the Volumetric Clouds section there.^Cloud MovementClouds (either 2D or volumetric) move on event tick, in a function called Set Cloud Timing. It has two paths in it, one for in editor, to preview cloud movement. And one for runtime, to move incrementally in a way that can change with wind direction/speed. This function also handles the Cloud Phase, which adjusts the offset of the cloud formation in time.^Simulation FeaturesUDS can control the Sun Moon and Stars instead using an approximate simulation of real worl
+d locations. This is mainly achieved in the function called Approximate Real Sun Moon and Stars. This function works by first extracting an exact UTC time (adjusting for time zone, date, leap year, etc). Then turning that exact time of year into a vector for the sun, a vector for the moon (and a phase), and an angle+axis for the real stars texture. This is sampled in the Set Sun and Moon Root Rotation function to replace the simpler logic for sun and moon movement there.^Cloud ShadowsIf cloud shadows are enabled, UDS will create dynamic material instances for the light functions on the Sun and
+ Moon directional lights, and update them using the cloud movement logic, to match the cloud conditions, either with 2D clouds or volumetric clouds (cloud shadows can be used with the sky modes that don’t have dynamic clouds as well. In this case they use the 2D cloud shadows material). The cloud shadows settings are controlled in the Update Active Variables function, in the Cloud and Cloud Shadows section.^Lens FlareIf “Enable Sun Lens Flare” is enabled, UDS will enable a post process component with a special post process material (using a dynamic material instance) which renders a lens flare
+ for the sun when visible. The effect is set up in the function Set Up Lens Flare, and updated periodically (to turn the effect off when unnecessary, for example when the sky is overcast) in the function Update Lens Flare.^Color ModeThere are two Color Modes selectable on UDS, which change the system significantly. The first, default mode is Sky Atmosphere, which uses a sky atmosphere component to produce sky and cloud coloring. If this mode is selected, the Sky Atmosphere component is set to be visible and the lights and materials are initialized to sample colors from the sky atmosphere. If t
+he mode is instead set to Simplified Color, the Sky Atmosphere component is disabled, and color is handled manually by the UDS blueprint. The colors of the sky are set in the Simplified Color section of the Update Active Variables function. And this also has an effect on light colors/intensities, in their respective sections as well.
 -----
 BLUEPRINT - ULTRA DYNAMIC WEATHER
 -----
@@ -403,7 +448,6 @@ or looking from the top, in the green channel.) Note that these are unlit partic
 
 
 
-
 ***
 PART 4
 ***
@@ -443,15 +487,15 @@ SNOW/DUST COVERAGE AND WETNESS IN INTERIORS
 -----
 After adding snow and wetness material effects to your materials, you might be disappointed to find that without additional work they show up in interiors.
 This is normal. The material functions pixel and vertex shader logic have no way of knowing what context they're used in. They don't know if the surface is "inside" or not. And the best way for a material to sample that information will vary from project to project and from material to material.
-Whatever method you want to use, there are inputs on the functions to mask the effects. "Mask Snow/Dust Coverage" on Snow Weather Effects, "Mask Wetness" on Wet Weather Effects, and "Mask Snow/Dust Coverage" and "Mask Wetness" on the DLWE function. These take in a 0 to 1 mask which completely blocks formation at a value of 0.
+One option is to mask the effects using the inputs on the material functions. "Mask Snow/Dust Coverage" on Snow Weather Effects, "Mask Wetness" on Wet Weather Effects, and "Mask Snow/Dust Coverage" and "Mask Wetness" on the DLWE function. These take in a 0 to 1 mask which completely blocks formation at a value of 0.
 A simple and cheap method of controlling this mask in a static way is to use a vertex color channel. You could plug a channel of vertex color into Max Snow/Dust Coverage and paint the mesh in the level editor to define what parts form snow, for example.
+Another option if you need isolated specific control of masking is to use the Weather Mask Brush actor, in Blueprints/Weather_Effects. It can mask an area using simple brush shapes projected on the Z axis. For example, if you needed the space under a large tree to gather less snow, you could place a weather mask brush which draws a soft radial falloff on the ground around it.
 -----
 DLWE INTERACTIONS NOT HAPPENING WHEN THEY SHOULD
 -----
 If you've set up DLWE (following the directions laid out in the DLWE section of this readme) and interactions aren't happening, here's a list of things to check:>• Make sure your landscape (or static mesh) has simple collision using the Object Type specified by "Landscape Object Type" in the DLWE settings on UDW. By default, this is World Static.
 • Make certain "Enable Dynamic Landscape Weather Effects" is on.
 • Make sure the DLWE Interaction component is positioned and has a size big enough to trigger interactions with the surface.
-• If you've modified "Render Target Resolution" in DLWE settings, make sure you've actually changed the resolution of both the render targets in Textures/Weather to match.
 -----
 VOLUMETRIC CLOUDS DON'T RENDER IN FRONT OF OBJECTS
 -----
@@ -464,12 +508,6 @@ WEATHER PARTICLES NOT COLLIDING WITH OBJECTS
 If you're having trouble with weather  particles not being blocked by objects that they seemingly should, here are a few things to check:>• Make sure the object has simple collision. The traces used by the particles only check for simple collision.
 • Make sure the collision profile of the object is set to block the trace channel selected on UDW as "Weather Particle Collision Channel". By default this is Visibility. Also make sure the collision response is Collision Enabled or Query Only, as queries are what the particles use.
 • If particles are coming through the roof of a building with a very tall ceiling, it may be that the particles aren't checking high enough for the ceiling when they spawn in. You can adjust this distance using "Ceiling Check Height" on UDW.
------
-VOLUMETRIC FOG IS DARK/CREATES A HARD CUTOFF IN THE FOG
------
-If enabling volumetric fog causes the nearby fog to lose its lighting, and produce a dark line where the local fog meets non-volumetric fog, this is caused by incompatibility with the real time sky light capture.
-Volumetric fog cannot recieve light from a real time captured sky light. It's just a limitation of the engine currently.
-For this reason, if you're using volumetric fog, I'd recommend changing the Sky Light Mode to "Cubemap with Dynamic Color Tinting" which doesn't rely on real time capturing. It will light the volumetric fog correctly.
 -----
 LIGHT ARTIFACTS WHEN INSIDE VOLUMETRIC CLOUDS
 -----

@@ -1,3 +1,4 @@
+
 ***
 PART 1
 ***
@@ -139,6 +140,7 @@ UDS has a category called Interior Adjustments, which if enabled, you can use to
 To use these settings, first check "Apply Interior Adjustments" in the Interior Adjustments category.
 Then, make your changes to the settings below, which modify various properties of the sky when inside an interior.
 Note, the interior adjustments can only test and respond to the player camera's location at runtime, so you'll need to play the level to see the effects.
+You can also place the UDS_Occlusion_Volume actor, found in Blueprints/Occlusion, to force specific spaces to be fully occluded and always apply the interior adjustments. Note the setting on UDS for "Occlusion Sampling Mode" which determines if occlusion is determined by the traces for collision, the occlusion volumes, or both.
 -----
 TRIGGERING EVENTS AT SUNRISE AND SUNSET
 -----
@@ -154,12 +156,18 @@ Each entry has post process settings, where you can override and modify any post
 2. Checkboxes to mask the component with cloud coverage, fog, dust, or interior occlusion. For example, if you checked "Mask Blend Weight When Overcast", the post settings for this component would fade away as the sky becomes overcast.
 By adding entries to this array, you can customize the post processing settings for any specific condition.
 -----
+USING ULTRA DYNAMIC SKY WITH THE PATH TRACER
+-----
+If you render using the Path Tracer in a scene with Ultra Dynamic Sky, you'll face some rendering limitations of the path tracer. Specifically it cannot yet render many of the sky rendering features (clouds, sky atmosphere) which UDS makes use of. The path tracer will instead use the sky light cube map as a replacement for native sky rendering.
+Ultra Dynamic Sky has a setting specifically to adjust for these limitations as well as it can, to work accepably as a background for path traced renders. Just enable the option "Adjust for Path Tracer" in the advanced dropdown of the Basic Controls category on UDS.
+-----
 ADDING AMBIENT SOUNDS CONTROLLED BY TIME AND WEATHER
 -----
 If you want an ambient sound actor to adjust it's volume based on if it's day or night, or based on the weather state from Ultra Dynamic Weather, there's a class included for that.
 It's called "AmbientSound_Time_and_Weather_Controlled" and can be found in the Blueprints/Sound folder.
 It's a child of the normal Ambient Sound class, so it works exactly the same. Just with additional logic to control the volume multiplier with time and weather.
 At the top of the Sound category, you'll find the settings for this. There are volume multipliers for day and night, as well as ones for snowy/rainy/no weather. There's also a setting called Volume Multiplier Transition Time which controls how long it will take the volume multiplier to change when time/weather triggers a change.
+If using this for outdoor ambient sounds, you may also want your sound to adjust to UDW's sound occlusion, getting quieter in interiors the same way UDW's weather sounds do. There is an intended way to do this. If you use the sound class UDS Outdoor Sounds for your ambient sounds, and you have sound occlusion enabled on UDW, then your sound volume will be affected by the sound occlusion.
 -----
 SAVING THE SKY AND WEATHER STATE FOR SAVE DATA
 -----
@@ -228,8 +236,10 @@ A weather override volume can either apply a single weather type within its spac
 To adjust the area affected by the volume, edit the points of the spline component. You can right click on a point on the spline to add new spline points. You can also scale the actor, but try to avoid non-uniform scaling.
 The variable "Transition Width" controls how much space is devoted to transitioning from the outside weather state to the inside weather state. The transition is completely spatial, so ideally the transition width should be very high, to offer a smooth transition between states as the player crosses into the volume. The default transition width is small to keep the initial size of the actor reasonable as a starting point. An ideal transition width would typically be much larger.
 You can adjust the Priority variable to control what happens when multiple volumes overlap.
-The effects of the Weather Override Volumes are dependent on the position of the player, so they're only visible when the game is running.
+The effects of the Weather Override Volumes on weather state are dependent on the position of the player, so they're only visible when the game is running.
 By default, UDW will test against the weather override volumes using the current player pawn location. You can adjust this behavior from the advanced dropdown of UDW's Basic Controls. The Control Point Source Location is what determines this.
+The Weather Override Volumes will, by default, draw their material state into a render target sampled by the weather material functions, so that for example a snowy region can appear snowy from outside, and from inside you can see the lack of snow coverage outside the region. This behavior can be disabled or adjusted on UDW, from the Weather Override Volumes category.
+Weather Override Volumes also have functions which can be called to change their state at runtime, similar to UDW. There is a Change Weather function, which will transition to a specific static weather preset. And there is Change to Random Weather, which will transition over to random weather if the existing mode is Single Weather Type.
 -----
 SETTING UP AND CONTROLLING MATERIAL EFFECTS
 -----
@@ -269,6 +279,7 @@ USING WEATHER SOUND EFFECTS
 -----
 By default, Ultra Dynamic Weather has sound effects enabled for wind, rain and thunder. You can completely disable the sound effects using the checkbox at the top of the Sound Effects category, or you can adjust the volume of each sound there as well.The sound effects on UDW are affected by a simple system of sound occlusion by default, which periodically sends out traces from the camera location and adjusts sound volume and low pass filter frequency if the player is in an enclosed space. This behavior can be disabled or adjusted from the Sound Occlusion category.
 From this category you can also change the sound occlusion to use the Control Point Location (player pawn location by default) if that makes more sense for your project. For example, a top down game where occlusion whould be player centric instead of camera centric.
+You can also place the UDS_Occlusion_Volume actor, found in Blueprints/Occlusion, to force specific spaces to be fully occluded and always attenuate weather sounds. Note the setting on UDW for "Occlusion Sampling Mode" which determines if occlusion is determined by the traces for collision, the occlusion volumes, or both.
 -----
 ADJUSTING THE LIGHTNING EFFECTS
 -----

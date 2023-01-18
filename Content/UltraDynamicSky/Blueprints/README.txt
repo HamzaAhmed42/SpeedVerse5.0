@@ -1,4 +1,3 @@
-
 ***
 PART 1
 ***
@@ -29,6 +28,7 @@ In Basic Controls, there is a setting called Sky Mode. This controls the type of
 3. 2D Dynamic Clouds - Dynamic clouds drawn using panning 2D textures.
 4. No Clouds - This mode uses no dynamic clouds at all.
 6. Volumetric Aurora - Sacrifices clouds to render full 3D aurora effects. Adjustable using the settings in the Aurora category.
+7. Space - For scenes set in outer space, with no planet/ground beneath the viewer. Disables all clouds, atmosphere, sky coloring, leaving only sun, moon and stars.
 If you decide to use Volumetric Clouds, also take note of the setting called Volumetric Cloud Rendering Mode, in the Volumetric Clouds category. It determines how the volumetric clouds are rendered and has a large impact on performance and quality. It also determines if volumetric clouds can render over opaque objects.
 -----
 SETTING THE COLOR MODE
@@ -102,11 +102,10 @@ The stars position should actually be pretty much completely accurate. This is b
 -----
 ANIMATING THE SKY WITH SEQUENCER
 -----
-Here are some tips for animating UDS using sequencer:>• To animate Time of Day directly, you should disable the "Animate Time of Day" setting on UDS, and keyframe the Time of Day variable. When animating with the Time of Day variable, it's okay to go past 2400. The system will understand this and proceed forward in time with a new day.
-• To animate the cloud coverage, you can keyframe the Cloud Coverage variable on UDS, but only if you don't have an Ultra Dynamic Weather actor in your scene. If you do, you should keyframe the Cloud Coverage variable on UDW instead. (See the sequencer section in Weather Basics for info about animating on UDW)
-• To directly animate cloud movement, first set Cloud Speed to 0 (or set Cloud Speed Multiplier to 0 on UDW if you have a UDW actor in your scene). Disable "Randomize Cloud Formation on Run" and "Clouds Move with Time of Day" as well. Then in sequencer, animate using the Cloud Phase variable. This will allow you to directly control cloud movement in a way that will play back the same way every time.
-• If you need to animate a variable on UDS which isn't exposed to sequencer by default, you'll need to expose it in the variable settings. To do this, open UDS in the blueprint editor, and find the variable in the variable list. With it selected, find the option in the details panel called "Expose to Cinematics". Check this, and the variable will be available in sequencer for keyframing.
-• For tips about animating weather, see the section about sequencer in the Weather Basics chapter of the readme.
+Here are some tips for animating UDS using sequencer.Keyframing Time of Day> To animate Time of Day directly, you should disable the "Animate Time of Day" setting on UDS, and keyframe the Time of Day variable. When animating with the Time of Day variable, it's okay to go past 2400. The system will understand this and proceed forward in time with a new day.Keyframing Cloud Coverage> To animate the cloud coverage, you can keyframe the Cloud Coverage variable on UDS, but only if you don't have an Ultra Dynamic Weather actor in your scene. If you do, you should keyframe the Cloud Coverage variable
+ on UDW instead. (See the sequencer section in Weather Basics for info about animating on UDW)Keyframing Cloud Movement> To directly animate cloud movement, first set Cloud Speed to 0 (or set Cloud Speed Multiplier to 0 on UDW if you have a UDW actor in your scene). Disable "Randomize Cloud Formation on Run" and "Clouds Move with Time of Day" as well. Then in sequencer, animate using the Cloud Phase variable. This will allow you to directly control cloud movement in a way that will play back the same way every time.Rendering a Movie>If you're rendering out a movie using sequencer, make sure to
+ change Project Mode on UDS to "Cinematic / Offline". This configures the sky for maximum quality while rendering, disabling many optimizations that are useful only in real-time rendering scenarios. If rendering a movie using the path tracer, also take note of the option on UDS, "Adjust for Path Tracer".
+If your project does need real-time performance at runtime normally , be sure to turn Project Mode back to Game / Real-time after completing your movie render, or game performance will be severely compromised.For tips about animating weather, see the section about sequencer in the Weather Basics section of the readme.
 -----
 OPTIMIZING FOR PERFORMANCE
 -----
@@ -156,6 +155,19 @@ Each entry has post process settings, where you can override and modify any post
 2. Checkboxes to mask the component with cloud coverage, fog, dust, or interior occlusion. For example, if you checked "Mask Blend Weight When Overcast", the post settings for this component would fade away as the sky becomes overcast.
 By adding entries to this array, you can customize the post processing settings for any specific condition.
 -----
+ADDING ADDITIONAL PLANETS / MOONS USING THE SPACE LAYER
+-----
+UDS can render additional planets and moons, to the sky layer, correctly composited so they block stars, but are obscured behind clouds and aurora.
+The place to do this is the Space Layer category on UDS. You can either manually add planets to the Planets / Moons array in that category, or you can start with one of the presets by selecting something for "Add Planet / Moon Preset".
+Within the Planets / Moons array, you can customize the look and behavior of each planet.
+All of the settings have tooltips, but here are a few key ones to note:>- Parent controls what the planet will move with. It can be parented to the sun, the moon, or it can be left unparented so it doesn't move, or could potentially be moved manually.
+- Relative Rotation rotates the orientation of the planet, relative to what it's been parented to.
+- Scale sets the visual scale of the planet.
+- The Terminatior settings refer to the solar terminator, the line between the light and dark sides of the planet.
+- The Light Vector controls where the light source determining the light/dark side of the planet will come from. The sun, the moon, or the custom vector.
+- The Glow settings control an additional element, which renders a diffuse atmospheric glow around the planet. The brightness depends on how much of the lit side is facing the camera, and is scaled with the setting Space Glow Brightness in the Space Layer category.The space layer draws these additional planets into the sky material using the dbuffer. So Dbuffer Decals should be enabled in your project, and need to be supported by the platform, for these planets/moons to be rendered.
+Also note, Unreal 5.0 did not support mesh decal objects being sorted, so while this feature can be used in 5.0, the individual objects can't overlap each other without potential sorting errors. This isn't a problem in 5.1, where mesh decal sorting was added to the engine. In 5.1, the planets will be sorted from first to last, based on their order in the array.
+-----
 USING ULTRA DYNAMIC SKY WITH THE PATH TRACER
 -----
 If you render using the Path Tracer in a scene with Ultra Dynamic Sky, you'll face some rendering limitations of the path tracer. Specifically it cannot yet render many of the sky rendering features (clouds, sky atmosphere) which UDS makes use of. The path tracer will instead use the sky light cube map as a replacement for native sky rendering.
@@ -179,7 +191,6 @@ SAVING AND APPLYING CONFIGURATIONS
 It may be useful to save a full configuration of all the settings on UDS for reusing in other levels/projects. You can do this using the configuration manager. You can find the configuration manager in the Blueprints folder, and run it by right clicking and selecting Run Editor Utility Widget.
 In the configuration manager, you can select your existing saved configurations to apply to your UDS actor. And you can create new configurations using the save button in the bottom right, when no configuration is selected.
 You will be prompted to name your new configuration and select a place to save it. You can either save to your project files, which will put the new config into the Ultra Dynamic Sky folder in your project. Or you can save to the engine content folder, which will put the config file into an Ultra Dynamic Sky folder there. If the config is saved in the project, it will be accessible only from this project. If the config is saved to the engine, it will be accessible by UDS in any project using that engine version.
-
 
 
 
@@ -226,8 +237,8 @@ Transition Length defines how much time is devoted to transitioning between each
 -----
 MANUALLY CHANGING THE WEATHER STATE DURING THE GAME
 -----
-If you want to directly transition (either over time or instantly) the weather state to a new type of weather while the game is running, there is a function to do that.
-It's called Change Weather, and it has inputs for the Weather type to change to, the amount of time to transition to this new weather type, and if using Random Weather Variation, there are additional settings for how long to hold on this weather type before transitioning back to random weather.
+If you want to directly transition (either over time or instantly) the weather state to a new type of weather while the game is running, there is a function on UDW for that.
+It's called Change Weather, and it has inputs for the Weather type to change to, the amount of time to transition to this new weather type. Call it at runtime on a reference to the UDW actor in the scene, to trigger a weather change.
 -----
 CHANGING WEATHER WITH LOCATION
 -----
@@ -265,15 +276,15 @@ The render target will dynamically recenter itself as your player pawn moves thr
 For spawning sounds and particles, the interaction components approximate some of the logic happening in the material function, to dynamically determine if a spot has puddles or snow. They don't have any way of knowing about how you're masking the effects in the material though, so you might run into situations where there are sounds and particles happening where there isn't snow or a puddle. To avoid this, you can have specific physical materials set to block these effects. In the advanced dropdown of the Dynamic Landscape Weather Effects category, find the physical material arrays for rain a
 nd snow/dust. Adding to these arrays will ensure sounds and particles are not triggered on these phys mats.
 -----
-USING WEATHER MASK BRUSHES TO MASK MATERIAL EFFECTS
+USING THE WEATHER MASK ACTORS TO MASK MATERIAL EFFECTS
 -----
-By default, the material effects for snow, dust and wetness will affect everywhere globally, across the whole scene. To mask out arbitrary spaces of either snow or wetness (or both), there is a system of Weather Mask Brushes.
-You can find the Weather Mask Brush actor in the Blueprints/Weather_Effects folder.
-The brush will draw a simple shape or gradient, selectable using the variable "Brush". The brush actor can also be scaled non-uniformly and rotated on the Z axis. Because the system works by drawing these shapes into a single render target, the shapes are always projected straight up and down on the Z axis.
+By default, the material effects for snow, dust and wetness will affect everywhere globally, across the whole scene. To mask out snow or wetness (or both) in specific spaces, there are Weather Mask Brushes and Weather Mask Projection Boxes. You can find both of these actors in the Blueprints/Weather_Effects folder.^Weather Mask Brush> The Weather Mask Brush will draw a simple shape or gradient, selectable using the variable "Brush". The brush actor can also be scaled non-uniformly and rotated on the Z axis. Because the system works by drawing these shapes into a single render target, the shape
+s are always projected straight up and down on the Z axis.
 You can adjust how much each brush affects snow or wetness with the variables "Mask Wetness" and "Mask Snow/Dust".
-There is also an option, called "Cancel Masks Above". This affects the entire rectangle the brush occupies, disabling any brush masking above the height of the actor.
-If you want any individual material or instance to ignore the weather mask brushes, you can use the static switch parameters "Apply Weather Mask Brushes to Wetness" and "Apply Weather Mask Brushes to Snow" to disable the effects at the material level.
-The effects of the brush will fade once they reach a certain distance from the camera. This is determined by the width of the render target they draw to for the masking. You can adjust that scale in the Weather Mask Brushes category on UDW.
+There is also an option, called "Cancel Masks Above". This affects the entire rectangle the brush occupies, disabling any brush masking above the height of the actor.^Weather Mask Projection Box> The Weather Mask Projection Box captures the meshes within the box, and uses those shapes to mask weather effects straight down. You can place a projection box around a complex structure like a building, and the shapes of the structure will occlude directly below.
+Try to place the box so it encompasses only the region of space which needs to occlude downward. For example, you might place the box so it only contains the roof of a house. Also try to make sure the width and length of the box is as small as it can be to fit the occluding objects inside, to eliminate wasted space and resolution of the resulting render target.
+In the exposed settings for the projection box, you can adjust the amount snow/dust and wetness are masked, as well as how much the mask beneath the box is blurred when drawn into the mask target.If you want any individual material or instance to ignore the weather mask actors, you can use the static switch parameters "Apply Weather Mask Brushes to Wetness" and "Apply Weather Mask Brushes to Snow" to disable the effects at the material level.
+The effects of the mask will stop once they reach a certain distance from the camera. This is determined by the width of the render target they draw to for the masking. You can adjust that scale in the Weather Mask Target category on UDW.
 -----
 USING WEATHER SOUND EFFECTS
 -----
@@ -321,11 +332,11 @@ You could have your actor call this function periodically, and respond when the 
 -----
 USING WEATHER WITH SEQUENCER
 -----
-Here are some tips for how the weather system can be animated using sequencer.>• To animate the current weather state manually using sequencer, you'll want to use the Manual Weather State, keyframing the variables in that category. To enable the Manual Weather State, clear the Weather variable in Basic Controls, so that no weather preset is selected.
-• To animate cloud movement in a way that will play back the same every time: First, set Cloud Speed Multiplier to 0 on UDW. Then, turn off Randomize Cloud Formation On Run, in Cloud Movement on UDS. Then in Sequencer, animate the Cloud Phase variable on UDS. This will allow directly controlling cloud movement with keyframes.
-• When previewing a sequence that contains rain/snow/dust, note that the particles will not be visible during the playback preview in editor. This is just a limitation of sequencer's preview. It's unfortunate, but as of now there is no workaround. To test how particles are looking at a specific place in the animation, pause the playback there and the particles should resume.
-• Lightning flashes, being animated by blueprint logic, will not be visible when previewing sequences either, though they will be visible if rendering a sequence or running one in game. If you want direct control over the timing of lightning flashes in your animation, disable Spawn Lightning Flashes on UDW, and run the UDW function Flash Lightning using an event track on your sequence. The Flash Lightning function also has inputs for providing a custom location for the lightning flash. With all of this together, you can animate lightning to flash at the specific time and place in the animation
- that you want.
+Here are some tips for how the weather system can be animated using sequencer.Keyframing the Weather State>To animate the current weather state manually using sequencer, you'll want to use the Manual Weather State, keyframing the variables in that category. To enable the Manual Weather State, clear the Weather variable in Basic Controls, so that no weather preset is selected.Keyframing the Material Effects>If you're keyframing the Material Wetness, Material Snow Coverage, or Material Dust Coverage directly, you'll need to make one change to have those keyframes work the same at runtime as they
+ do in your sequence. In the Material Effects category, disable "Material Effects Take Time To Change". This will make it so at runtime the material effects show exactly as they're keyframed at each frame, instead of changing gradually with weather state.Keyframing Cloud Movement>To animate cloud movement in a way that will play back the same every time: First, set Cloud Speed Multiplier to 0 on UDW. Then, turn off Randomize Cloud Formation On Run, in Cloud Movement on UDS. Then in Sequencer, keyframe the Cloud Phase variable on UDS. This will allow directly controlling cloud movement with key
+frames.Weather Particles in Sequence Editor>When previewing a sequence where UDW is bound to the sequence, note that the weather particles will not be visible during the playback preview in editor. This is just a limitation of sequencer's preview, not something which will be present at runtime/in a render. It's because the only way the sequence editor has to update bound blueprints is by re-running their construction script, which restarts niagara components. To test how particles are looking at a specific place in the animation, pause the playback there and the particles should resume.Keyfram
+ing a Lightning Flash>Lightning flashes, being animated by blueprint logic, will not be visible when previewing sequences, though they will be visible if rendering a sequence or running one in game. If you want direct control over the timing of lightning flashes in your animation, disable Spawn Lightning Flashes on UDW, and run the UDW function Flash Lightning using a trigger event track on your sequence. The Flash Lightning function also has inputs for providing a custom location for the lightning flash. Note the location it takes should be the place the bolt starts, so it should be up at the
+ height of the clouds.Rendering a Movie>Just as with keyframing things on UDS, take note of the Project Mode setting on UDS, if you need to render a movie for offline playback. Change that setting on UDS to "Cinematic / Offline", to force max quality for the sky rendering and force both blueprints to update completely every frame at runtime.
 -----
 MATERIAL EFFECTS FOR SPECIAL CASES
 -----
@@ -343,7 +354,6 @@ In the Landscape Material:
 o the landscape height, the Min Height Level would be 0 and the Max Height Level would be 10.
 - On UDW, make sure "Enable Dynamic Landscape Weather Effects" is checked.
 - Also check "Support Virtual Heightfield Mesh" and in the option below that for "VHFM Runtime Virtual Texture Volume", select the RVT Volume in your level which is responsible for rendering to the World Height RVT, used to generate the heightfield mesh.
-
 
 
 
@@ -444,7 +454,6 @@ on the ribbon particle element of the lightning flash niagara system. Samples a 
  spots where rain drops fall, if enabled. It reuses the rain and snow particle sprite sheet, using the snow particle sprites for the shape of the effect. The material only outputs roughness in the space it affects.^Screen DropletsThe post process material used by the screen droplets effect on UDW. Samples the drips vertical mask texture, which pans down, and the ScreenDroplets_Small texture, which doesn't pan, to produce a distortion value for a scene texture sample. Also contains logic to multisample that distortion for a blur effect on high quality.^Snow ParticleMatThe material used by the s
 now particle system. Functionally very similar to the rain particle mat. Uses the same Volumetric Directional lighting mode.^Snow Trail ParticleA dithered masked material used by the DLWE Interaction component's snow trail particle effect. A dithered masked material is used to avoid lighting problems with large translucent particles intersecting the ground.^Splash Particle MatThe material used by the splash particles in the rain niagara system and the rain drip spline. They sample the splash animation texture (4 frames for looking at the splash from the side, in the red channel, and 4 frames f
 or looking from the top, in the green channel.) Note that these are unlit particles and they determine their emissive color using a scattered scene color sample.^Wind DebrisThe material used by the wind debris particles. Samples the texture selected on UDW and fades using the alpha setting, and a camera depth fade. Uses Volumetric Per Vertex Directional lighting.
-
 
 
 

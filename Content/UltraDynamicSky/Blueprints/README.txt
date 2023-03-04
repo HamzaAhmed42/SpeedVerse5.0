@@ -107,6 +107,16 @@ Here are some tips for animating UDS using sequencer.Keyframing Time of Day> To 
  change Project Mode on UDS to "Cinematic / Offline". This configures the sky for maximum quality while rendering, disabling many optimizations that are useful only in real-time rendering scenarios. If rendering a movie using the path tracer, also take note of the option on UDS, "Adjust for Path Tracer".
 If your project does need real-time performance at runtime normally , be sure to turn Project Mode back to Game / Real-time after completing your movie render, or game performance will be severely compromised.For tips about animating weather, see the section about sequencer in the Weather Basics section of the readme.
 -----
+PAINTING VOLUMETRIC CLOUD COVERAGE
+-----
+There are tools included for manually painting cloud coverage into the volumetric cloud layer. This painted coverage level is applied on top of the global cloud coverage value set on UDS (or by the weather state if UDW exists).
+With UDS in the scene and Volumetric Clouds selected for its sky mode, run the Volumetric Cloud Painter editor utility, found in the Blueprints folder.
+When you press Start Painting, the tool will prepare UDS and the level for clouds to be painted. An actor called UDS Cloud Paint Container will be created in the current level to hold the painting data for the level.
+Here's a description of the various parts of the cloud painter interface and how to use them:>- The top bar is where you will adjust the brush used to paint cloud coverage. You can change the texture, strength, falloff, and brush spacing.
+- The viewport in the cloud painter is where you will paint brush strokes onto the cloud layer. Left click to paint, right click to drag the viewport, middle mouse click and drag to zoom in and out (or use the buttons in the lower right). You can change between three view modes by clicking View in the lower left. You can also toggle the painting viewport locking the level viewport camera to the painting area, using the lock icon there.
+- On the left of the viewport are the different paint and erase modes. You can paint three levels of cloud coverage, represented on the viewport as red, green, and blue. You can also erase existing painting (paint black).
+- At the bottom of the tool is the button to Save to Textures. Make sure to press this to end your painting session and save your work. It will save the painted cells to texture files. It will put these into a subfolder called UDS_LevelData, in the folder where the level is located.The painted cell textures are drawn into a cloud coverage render target on UDS. You can find the settings for the size and resolution of that target, and how its used, on UDS in the Volumetric Cloud Painting category.
+-----
 OPTIMIZING FOR PERFORMANCE
 -----
 With everything enabled at the highest quality, UDS can be demanding for some hardware to run. Here are some suggestions if the performance cost is too high for your project.If Using Volumetric Clouds:>• Try adjusting the View Sample Count Scale and Shadow Sample Scale. Reducing these will lower the cost of the volumetric rendering, but can introduce noise and artifacts.
@@ -141,11 +151,18 @@ Then, make your changes to the settings below, which modify various properties o
 Note, the interior adjustments can only test and respond to the player camera's location at runtime, so you'll need to play the level to see the effects.
 You can also place the UDS_Occlusion_Volume actor, found in Blueprints/Occlusion, to force specific spaces to be fully occluded and always apply the interior adjustments. Note the setting on UDS for "Occlusion Sampling Mode" which determines if occlusion is determined by the traces for collision, the occlusion volumes, or both.
 -----
-TRIGGERING EVENTS AT SUNRISE AND SUNSET
+MAKING LIGHTS TURN ON AT NIGHT / DURING THE DAY
 -----
-There are Sunrise and Sunset event dispatchers. These could be useful for toggling lighting that you only want enabled at night, or controlling any type of blueprint that needs to know about day/night.
-To use them, you'll first need to get a reference to the UDS actor in your blueprints. A simple way to do that is to use "Get Actor of Class". Then using that reference, you can bind events in your blueprint by running "Bind to Sunrise" or "Bind to Sunset". Once they're bound, these events will be called by UDS at the appropriate time. By default, the events will fire at the exact moment the sun crosses the horizon. But you can offset that time to suit your needs using the "Sunrise Event Offset" and "Sunset Event Offset" settings in the Animate Time of Day category.
-For events that happen at a specific time, you could use the Hourly dispatcher, which triggers at the top of each hour and outputs the hour as an integer.
+There is a special component included to help make a light which turns on and off at sunset/sunrise. It's the "Light Day-Night Toggle" component found in the Blueprints/Utilities folder.
+Just add one of these components as a child of any light component on an actor. When the level is played, the light's active state will be determined by if the sun is up or not. It will be on at night by default, but you can change that using a setting on the component.
+By default the light will also animate its intensity as it powers on, to imitate a flourescent lamp. You can disable this or adjust it from the component's settings.
+The state of the light can also be used to control a "Light Toggle" parameter on an array of dynamic material instances. Just add a dynamic material instance to that array, and the parameter (from 0 to 1) will be set as the state of the light changes.
+-----
+TRIGGERING EVENTS AT SPECIFIC TIMES
+-----
+UDS has event dispatchers which fire at particular times, which your actors can use to perform actions at Sunset, Sunrise, Midnight, or Hourly.
+To use them, you'll first need to get a reference to the UDS actor in your blueprints. A simple way to do that is to use "Get Actor of Class". Then using that reference, you can bind events in your blueprint to the dispatchers. For example "Bind to Sunrise" or "Bind to Sunset". Once they're bound, these events will be called by UDS at the appropriate time.
+By default, the Sunset and Sunrise events will fire at the exact moment the sun crosses the horizon. But you can offset that time to suit your needs using the "Sunrise Event Offset" and "Sunset Event Offset" settings in the Animate Time of Day category.
 -----
 ADDING POST PROCESSING WHICH CHANGES WITH TIME / SKY STATE
 -----
@@ -191,6 +208,7 @@ SAVING AND APPLYING CONFIGURATIONS
 It may be useful to save a full configuration of all the settings on UDS for reusing in other levels/projects. You can do this using the configuration manager. You can find the configuration manager in the Blueprints folder, and run it by right clicking and selecting Run Editor Utility Widget.
 In the configuration manager, you can select your existing saved configurations to apply to your UDS actor. And you can create new configurations using the save button in the bottom right, when no configuration is selected.
 You will be prompted to name your new configuration and select a place to save it. You can either save to your project files, which will put the new config into the Ultra Dynamic Sky folder in your project. Or you can save to the engine content folder, which will put the config file into an Ultra Dynamic Sky folder there. If the config is saved in the project, it will be accessible only from this project. If the config is saved to the engine, it will be accessible by UDS in any project using that engine version.
+
 
 
 
@@ -251,6 +269,7 @@ The effects of the Weather Override Volumes on weather state are dependent on th
 By default, UDW will test against the weather override volumes using the current player pawn location. You can adjust this behavior from the advanced dropdown of UDW's Basic Controls. The Control Point Source Location is what determines this.
 The Weather Override Volumes will, by default, draw their material state into a render target sampled by the weather material functions, so that for example a snowy region can appear snowy from outside, and from inside you can see the lack of snow coverage outside the region. This behavior can be disabled or adjusted on UDW, from the Weather Override Volumes category.
 Weather Override Volumes also have functions which can be called to change their state at runtime, similar to UDW. There is a Change Weather function, which will transition to a specific static weather preset. And there is Change to Random Weather, which will transition over to random weather if the existing mode is Single Weather Type.
+If you want to use a Weather Override Volume to change anything other than the weather state on UDW, that is possible. To do this, create a child of the Weather Override Volume class, and on that child override the function called "Custom Volume Behavior". This function is run from UDW when it uses the WOV to affect local weather. The Alpha input represents how much the player is inside the volume, from 0 to 1.
 -----
 SETTING UP AND CONTROLLING MATERIAL EFFECTS
 -----
@@ -317,6 +336,11 @@ This base value is then modified by the Factor variables in the Temperature cate
 Then the resulting temperature is clamped inside the Valid Temperature Range.
 The default values for all of these inputs are set with Fahrenheit in mind, but you can use Celsius values if you prefer. Just change the Temperature Scale at the top of the Temperature category, and supply all of the variables with your own appropriate Celsius values.
 -----
+ADJUSTING WEATHER ABOVE THE CLOUDS
+-----
+By default, UDW will apply adjustments to the local weather state at runtime, when the player camera goes above the volumetric cloud layer, if volumetric clouds are in use.
+You can find the settings for this in the Weather Above Volumetric Clouds category on UDW. You can enable or disable the adjustments entirely, or change the multipliers for each weather value used when above the clouds.
+-----
 ENABLING A RAINBOW EFFECT
 -----
 You can enable a rainbow effect as an aspect of the weather state, on UDW. The settings are found in the Rainbow category.
@@ -326,9 +350,16 @@ Like in reality, rainbows will only be visible in specific circumstances:>1. The
 -----
 MAKING AN ACTOR DETECT EXPOSURE TO WEATHER
 -----
-It might be necessary for an actor to query if it's exposed to weather directly. For example, if you wanted direct exposure to snow to damage a player's stamina meter.
-There's a function on UDW for this. It's called "Test Actor for Weather Exposure". If you have your actor call this function, and provide a reference to itself for the Actor input, the function will output floats which describe how exposed the actor is to rain, wind, snow and dust. These values each range from 0 to 1. They scale with the intensity of the weather and the amount the actor is exposed. So for example a value of 1 for snow would mean the actor is fully exposed to snow at maximum intensity.
-You could have your actor call this function periodically, and respond when the values go above a certain level.
+It might be necessary for an actor to know if it's exposed to weather directly. For example, if you wanted direct exposure to snow to damage a player's stamina meter.
+One way of doing this is to add the Actor Weather Status component to the actor. This component will keep track of the actor's status as its affected by weather. It will track temperature, wetness, snow, dust, and direct exposure to each weather type as well as wind. All of these values can be found in the component's Status category.
+You can also add dynamic material instances to an array in the component's Material Effects category, to have parameters set using the status values. These parameters are all 0-1 values and are called "Wet", "Raining", "Snowy", "Dusty", and "Wind Intensity".
+Instead of using the component to always track weather state, you can do a single query of an actor's exposure to weather by calling "Test Actor for Weather Exposure" on UDW. If you have your actor call this function, and provide a reference to itself for the Actor input, the function will output floats which describe how exposed the actor is to rain, wind, snow and dust. These values each range from 0 to 1. They scale with the intensity of the weather and the amount the actor is exposed. So for example a value of 1 for snow would mean the actor is fully exposed to snow at maximum intensity.
+-----
+APPLYING A PHYSICS FORCE TO A MESH USING WIND
+-----
+If you have objects which simulate physics, and you want them to be able to be pushed by the current wind on UDW, there is a component included for that. It's the Wind Physics Force component in the Blueprints/Weather Effects folder.
+Just add this component as a child of any primitive component which simulates physics. At runtime, the component will query the current wind state on UDW and do line traces to see how exposed to wind the component is.
+You can adjust the strength of the wind's physical force, as well as other specifics of how the component behaves, from its exposed settings.
 -----
 USING WEATHER WITH SEQUENCER
 -----
@@ -354,6 +385,7 @@ In the Landscape Material:
 o the landscape height, the Min Height Level would be 0 and the Max Height Level would be 10.
 - On UDW, make sure "Enable Dynamic Landscape Weather Effects" is checked.
 - Also check "Support Virtual Heightfield Mesh" and in the option below that for "VHFM Runtime Virtual Texture Volume", select the RVT Volume in your level which is responsible for rendering to the World Height RVT, used to generate the heightfield mesh.
+
 
 
 
@@ -454,6 +486,7 @@ on the ribbon particle element of the lightning flash niagara system. Samples a 
  spots where rain drops fall, if enabled. It reuses the rain and snow particle sprite sheet, using the snow particle sprites for the shape of the effect. The material only outputs roughness in the space it affects.^Screen DropletsThe post process material used by the screen droplets effect on UDW. Samples the drips vertical mask texture, which pans down, and the ScreenDroplets_Small texture, which doesn't pan, to produce a distortion value for a scene texture sample. Also contains logic to multisample that distortion for a blur effect on high quality.^Snow ParticleMatThe material used by the s
 now particle system. Functionally very similar to the rain particle mat. Uses the same Volumetric Directional lighting mode.^Snow Trail ParticleA dithered masked material used by the DLWE Interaction component's snow trail particle effect. A dithered masked material is used to avoid lighting problems with large translucent particles intersecting the ground.^Splash Particle MatThe material used by the splash particles in the rain niagara system and the rain drip spline. They sample the splash animation texture (4 frames for looking at the splash from the side, in the red channel, and 4 frames f
 or looking from the top, in the green channel.) Note that these are unlit particles and they determine their emissive color using a scattered scene color sample.^Wind DebrisThe material used by the wind debris particles. Samples the texture selected on UDW and fades using the alpha setting, and a camera depth fade. Uses Volumetric Per Vertex Directional lighting.
+
 
 
 

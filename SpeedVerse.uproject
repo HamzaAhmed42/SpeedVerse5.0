@@ -21,7 +21,7 @@
 		},
 		{
 			"Name": "Bridge",
-			"Enabled": true,
+			"Enabled": false,
 			"SupportedTargetPlatforms": [
 				"Win64",
 				"Mac",
@@ -97,7 +97,7 @@
 		},
 		{
 			"Name": "LowEntryExtStdLib",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/846c2ad08f164f45b0335ecebf85361e"
 		},
 		{
